@@ -1,4 +1,5 @@
 import "next-auth";
+import type { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
   interface User {
@@ -9,7 +10,7 @@ declare module "next-auth" {
     user: {
       id: string;
       barbeariaId: string;
-    } & NonNullable<Session["user"]>;
+    } & DefaultSession["user"];
   }
 }
 
