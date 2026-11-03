@@ -135,8 +135,6 @@ export class ForaDoPrazoError extends Error {
   }
 }
 
-const today = new Date();
-
 const SERVICOS_EXEMPLO: ServicoDisponivel[] = [
   { id: "svc-corte", nome: "Corte", duracaoMin: 30, preco: 45 },
   { id: "svc-barba", nome: "Barba", duracaoMin: 30, preco: 35 },
@@ -194,10 +192,9 @@ function parseDateTime(value: string): Date {
   return parsed;
 }
 
-function formatIsoDateLocal(date: Date): string {
-  return new Date(date.getTime() - date.getTimezoneOffset() * 60_000)
-    .toISOString()
-    .slice(0, 16) + ":00-03:00";
+function toBarbeariaIso(date: Date): string {
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+  return `${local.toISOString().slice(0, 19)}-03:00`;
 }
 
 function getLocalDateKey(date: Date): string {
@@ -244,6 +241,7 @@ export function calcularHorariosLivres(input: HorarioLivreCalculoInput): string[
     const bloqueiosBarbeiro = input.bloqueios.filter(
       (bloqueio) => bloqueio.barbeiroId === barbeiroId && bloqueio.inicio.startsWith(data),
     );
+    const bloqueiosGerais = input.bloqueios.filter((bloqueio) => !bloqueio.barbeiroId && bloqueio.inicio.startsWith(data));
     const agendamentosBarbeiro = input.agendamentos.filter(
       (agendamento) => agendamento.barbeiroId === barbeiroId && agendamento.inicio.startsWith(data),
     );
@@ -264,15 +262,14 @@ export function calcularHorariosLivres(input: HorarioLivreCalculoInput): string[
           const fimBloqueio = parseDateTime(bloqueio.fim);
           return overlaps(cursor, fimSlot, inicioBloqueio, fimBloqueio);
         });
-
         if (conflitoBloqueio) continue;
 
-        if (bloqueiosBarbeiro.length === 0 && input.bloqueios.some((bloqueio) => !bloqueio.barbeiroId)) {
-          const fechamento = input.bloqueios.find((bloqueio) => !bloqueio.barbeiroId);
-          if (fechamento && overlaps(cursor, fimSlot, parseDateTime(fechamento.inicio), parseDateTime(fechamento.fim))) {
-            continue;
-          }
-        }
+        const conflitoBloqueioGeral = bloqueiosGerais.some((bloqueio) => {
+          const inicioBloqueio = parseDateTime(bloqueio.inicio);
+          const fimBloqueio = parseDateTime(bloqueio.fim);
+          return overlaps(cursor, fimSlot, inicioBloqueio, fimBloqueio);
+        });
+        if (conflitoBloqueioGeral) continue;
 
         const conflitoAgendamento = agendamentosBarbeiro.some((agendamento) => {
           const inicioAgendamento = parseDateTime(agendamento.inicio);
@@ -282,14 +279,14 @@ export function calcularHorariosLivres(input: HorarioLivreCalculoInput): string[
 
         if (conflitoAgendamento) continue;
 
-        slots.push(`${cursor.toISOString()}|${barbeiroId}`);
+        slots.push(`${toBarbeariaIso(cursor)}|${barbeiroId}`);
       }
     }
   }
 
-  return Array.from(new Set(slots)).
-    map((value) => value.split("|")[0]).
-    sort((left, right) => new Date(left).getTime() - new Date(right).getTime());
+  return Array.from(new Set(slots))
+    .map((value) => value.split("|")[0])
+    .sort((left, right) => new Date(left).getTime() - new Date(right).getTime());
 }
 
 export async function listarHorariosLivres(

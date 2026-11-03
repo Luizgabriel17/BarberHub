@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#292524" />
+    <title>Sem conexão | BarberHub</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: system-ui, sans-serif;
+        background: #fafaf9;
+        color: #1c1917;
+      }
+      body {
+        display: grid;
+        min-height: 100vh;
+        margin: 0;
+        place-items: center;
+        padding: 1.5rem;
+        box-sizing: border-box;
+      }
+      main {
+        width: min(100%, 32rem);
+        padding: 2rem;
+        border: 1px solid #e7e5e4;
+        border-radius: 1.25rem;
+        background: white;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.75rem;
+      }
+      p {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #57534e;
+      }
+      button {
+        min-height: 3rem;
+        padding: 0 1.25rem;
+        border: 0;
+        border-radius: 0.75rem;
+        background: #a16207;
+        color: white;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button:focus-visible {
+        outline: 3px solid #292524;
+        outline-offset: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p><strong>BarberHub</strong></p>
+      <h1>Você está sem conexão</h1>
+      <p>
+        Não foi possível carregar esta página agora. Confira sua internet e
+        tente novamente. Seus agendamentos precisam de conexão para serem
+        consultados ou alterados.
+      </p>
+      <button type="button" onclick="location.reload()">
+        Tentar novamente
+      </button>
+    </main>
+  </body>
+</html>

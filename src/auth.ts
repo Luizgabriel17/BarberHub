@@ -6,10 +6,11 @@ import { z } from "zod";
 import { authConfig } from "./auth.config";
 import { db } from "./db";
 import { barbearias, tentativasLogin, usuarios } from "./db/schema";
+import { senhaLoginSchema } from "./lib/validacao";
 
 const credentialsSchema = z.object({
   email: z.string().trim().email().max(254),
-  password: z.string().min(1).max(128),
+  password: senhaLoginSchema,
 });
 
 async function registrarFalhaDeLogin(email: string) {

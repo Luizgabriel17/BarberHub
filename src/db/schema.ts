@@ -1,9 +1,31 @@
-import { customType, integer, pgEnum, pgTable, smallint, text, time, timestamp, uniqueIndex, uuid, varchar, boolean, numeric, date, bytea, index } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  customType,
+  date,
+  index,
+  integer,
+  numeric,
+  pgEnum,
+  pgTable,
+  smallint,
+  text,
+  time,
+  timestamp,
+  uniqueIndex,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
 const citext = customType<{ data: string }>({
   dataType() {
     return "citext";
+  },
+});
+
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({
+  dataType() {
+    return "bytea";
   },
 });
 

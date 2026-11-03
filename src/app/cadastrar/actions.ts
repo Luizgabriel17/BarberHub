@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/db";
 import { barbearias, horariosFuncionamento, usuarios } from "@/db/schema";
-import { telefoneSchema, slugSchema } from "@/lib/validacao";
+import { normalizarTelefone } from "@/lib/formatacao";
+import { senhaSchema, slugSchema, telefoneSchema } from "@/lib/validacao";
 
 const cadastroSchema = z.object({
   nomeBarbearia: z.string().trim().min(2).max(120),
@@ -14,7 +15,7 @@ const cadastroSchema = z.object({
   endereco: z.string().trim().max(240),
   nomeProprietario: z.string().trim().min(2).max(120),
   email: z.string().trim().email().max(254),
-  senha: z.string().min(8).max(128),
+  senha: senhaSchema,
 });
 
 const slugsReservados = new Set([
@@ -51,7 +52,7 @@ export async function cadastrarBarbearia(formData: FormData) {
         .values({
           nome: dados.nomeBarbearia,
           slug: dados.slug,
-          whatsapp: dados.whatsapp,
+          whatsapp: normalizarTelefone(dados.whatsapp),
           endereco: dados.endereco || null,
         })
         .returning({ id: barbearias.id });

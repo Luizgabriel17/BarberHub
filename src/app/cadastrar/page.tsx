@@ -94,13 +94,13 @@ export default async function CadastrarPage({ searchParams }: CadastrarPageProps
           />
         </label>
         <label className="text-sm font-medium sm:col-span-2">
-          Senha (mínimo 8 caracteres)
+          Senha (8 a 72 caracteres)
           <input
             name="senha"
             type="password"
             required
             minLength={8}
-            maxLength={128}
+            maxLength={72}
             autoComplete="new-password"
             className="mt-2 min-h-11 w-full rounded-lg border border-stone-300 px-3 text-base"
           />

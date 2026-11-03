@@ -1,6 +1,7 @@
 import type { NextAuthConfig } from "next-auth";
 
 export const authConfig = {
+  secret: process.env.AUTH_SECRET ?? "development-secret",
   pages: {
     signIn: "/entrar",
   },
@@ -24,7 +25,11 @@ export const authConfig = {
       return token;
     },
     session({ session, token }) {
-      if (session.user && token.sub && token.barbeariaId) {
+      if (
+        session.user &&
+        typeof token.sub === "string" &&
+        typeof token.barbeariaId === "string"
+      ) {
         session.user.id = token.sub;
         session.user.barbeariaId = token.barbeariaId;
       }
